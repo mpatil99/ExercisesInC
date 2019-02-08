@@ -7,7 +7,10 @@ License: GNU GPLv3
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+/*get_usr_input: Reads user input
 
+returns: read_integer
+*/
 int get_usr_input(char* in,int* position, int length){
   if(fgets(in, 5, stdin)!= NULL) {
     // if(strlen(in)> 4){
@@ -22,6 +25,9 @@ int get_usr_input(char* in,int* position, int length){
   }
 }
 
+/*calc_sum
+returns the calculated sum of values in an ARRAY
+*/
 int calc_sum(int* vals, int length){
   int j,sum = 0;
   for (j = 0; j < length; j++) {
