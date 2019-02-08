@@ -10,6 +10,9 @@ License: GNU GPLv3
 
 int get_usr_input(char* in,int* position, int length){
   if(fgets(in, 5, stdin)!= NULL) {
+    // if(strlen(in)> 4){
+      printf("\nLength of input is:%ld\n",strlen(in));
+    // }
     return atoi(in);
   }
   else {

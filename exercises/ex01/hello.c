@@ -1,12 +1,24 @@
 #include <stdio.h>
 
+int dance(int input);
 int main() {
     int x = 5;
+    dance(x);
     printf("%i",x);
     int y = x + 1;
     printf("%i",y);
     return 0;
 }
+
+int dance(int input){
+  if(input==0){
+    return 1;
+  }
+  else{
+    printf("%i\n",input * dance(input-1));
+  }
+}
+
 /*
 1subq	$16, %rsp
 movl	$5, -4(%rbp)

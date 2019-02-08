@@ -11,7 +11,23 @@ int adjust_Count(int val);
 void count_Cards();
 int main()
 {
-  count_Cards(3);
+  int val = 9;
+  char card_name[3];
+  card_name[0] = '3';
+  printf("%d\n",card_name[0]);
+
+  char *card = card_name;
+  printf("%d\n",card[0]);
+  printf("%d\n",*card_name[0]);
+  printf("%s\n",card_name);
+
+  card_name[0] = 'f';
+  printf("%d\n",card[0]);
+  printf("%d\n",card_name[0]);
+  printf("%s\n",card_name);
+
+
+  // count_Cards(3);
   return 0;
 }
 
