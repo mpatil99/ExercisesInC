@@ -27,7 +27,11 @@ returns: 1 if true, 0 otherwise
 */
 int endswith(char *s, char *suffix)
 {
-    // TODO: Fill this in!
+
+    char* t = strstr(s,suffix);
+    if(t){
+      return strcmp(t, suffix) == 0;
+    }
     return 0;
 }
 
@@ -36,18 +40,19 @@ int endswith(char *s, char *suffix)
 */
 void test_endswith(char *s1, char *s2, int expected) {
     int got = endswith(s1, s2);
-    assert(got == expected);
+    assert (got == expected);//Change to assert
 }
 
 
 int main (int argc, char *argv[])
 {
+
     test_endswith("endswith", "swith", 1);
     test_endswith("endswith", "ends", 0);
     test_endswith("endswith", "offendswith", 0);
 
     // what's the right answer?
-    // test_endswith("endswith", "", ?);
+    // test_endswith("endswith", "", 0);
 
     printf("All tests passed\n");
 }
