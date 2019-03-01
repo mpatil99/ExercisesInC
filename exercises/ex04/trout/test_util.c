@@ -10,17 +10,21 @@ By Manu Patil
 #include "util.h"
 #include "minunit.h"
 
+int tests_run = 0;
 
 
-
-
+static char *test1() {
+    char* res = icmpcode_v4(5);
+    // printf("%s",res);
+    char *message = "test1 failed: icmpcode_v4(1) should return \"source route failed\" ";
+    mu_assert(message, !strcmp(res, "source route failed"));
+    return NULL;
+}
 
 
 
 static char * all_tests() {
     mu_run_test(test1);
-    mu_run_test(test2);
-    mu_run_test(test3);
     return NULL;
 }
 
