@@ -27,34 +27,34 @@ typedef struct rec {                /* outgoing UDP data */
 } Rec;
 typedef struct timeval Timeval;
 typedef struct sockaddr Sockaddr;
-int max_ttl = 30;
-int nprobes = 2;
+extern int max_ttl ;
+extern int nprobes ;
 
-/* other global variables */
+/* other global variables def omed using*/
 
-int seq = 0;
+extern int seq;
 
-char recvbuf[BUFSIZE];
-char sendbuf[BUFSIZE];
-Rec *rec = (Rec *) sendbuf;
+extern char recvbuf[BUFSIZE];
+extern char sendbuf[BUFSIZE];
+extern Rec *rec ;
 
-int sendfd, recvfd;
-int pipefd[2];              /* the pipe for the alarm handler */
+extern int sendfd, recvfd;
+extern int pipefd[2];              /* the pipe for the alarm handler */
 
-Sockaddr *sasend;    /* socket addresses for various purposes */
-Sockaddr *sarecv;
-Sockaddr *salast;
-Sockaddr *sabind;
+extern Sockaddr *sasend;    /* socket addresses for various purposes */
+extern Sockaddr *sarecv;
+extern Sockaddr *salast;
+extern Sockaddr *sabind;
 
-socklen_t salen;                    /* length of a socket address */
-int datalen = sizeof (Rec);         /* length of the data in a datagram */
+extern socklen_t salen;                    /* length of a socket address */
+extern int datalen;         /* length of the data in a datagram */
 
-u_short sport;                      /* source UDP port # */
-u_short dport = 32768 + 668;        /* destination port -- hopefully unused */
+extern  u_short sport;                      /* source UDP port # */
+extern  u_short dport;        /* destination port -- hopefully unused */
                                     /* 668 = the neighbor of the beast */
-Timeval sendtv[1];
-Timeval recvtv[1];
-Timeval difftv[1];
+extern Timeval sendtv[1];
+extern Timeval recvtv[1];
+extern Timeval difftv[1];
 
 
 /* the following are a few definitions from Stevens' unp.h */
@@ -62,11 +62,9 @@ Timeval difftv[1];
 #define max(a,b) ((a) > (b) ? (a) : (b))
 
 /* the following are prototypes for the Stevens utilities in util.c */
+//Moved to util.h
 
-
-
-
-
+//Methods from trout.c
 void sig_alrm (int signo);
 int recv_dgram ();
 void sub_tv (Timeval *plus, Timeval *minus, Timeval *res);

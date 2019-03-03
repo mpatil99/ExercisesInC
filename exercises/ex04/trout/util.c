@@ -1,5 +1,5 @@
 #include "util.h"
-
+//util methods from util.c
 void err_doit (int errnoflag, int level, char *fmt, va_list ap)
 {
   int errno_save, n;

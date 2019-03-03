@@ -4,8 +4,8 @@ util.o: util.c util.h
 trout.o: trout.c trout.h
 	gcc -c trout.c
 
-main.o: main.c trout.o trout.o
+main.o: main.c trout.o util.o
 	gcc -c main.c
 
-trout: main.c trout.o util.o
+trout: main.o trout.o util.o
 	gcc main.o trout.o util.o -o trout

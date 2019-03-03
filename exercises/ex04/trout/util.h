@@ -22,7 +22,7 @@
 #include <unistd.h>
 #define MAXLINE 4096
 #define BUFSIZE 1500
-
+//method headers from trout.h
 
        /* for signal handlers */
 typedef	void Sigfunc(int);
