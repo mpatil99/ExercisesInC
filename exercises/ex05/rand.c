@@ -5,6 +5,7 @@ License: MIT License https://opensource.org/licenses/MIT
 */
 
 #include <stdlib.h>
+#include <stdio.h>
 
 // generate a random float using the algorithm described
 // at http://allendowney.com/research/rand
@@ -55,6 +56,7 @@ float my_random_float2()
     // generate random bits until we see the first set bit
     while (1) {
         x = random();
+        // printf("%i",x);
         if (x == 0) {
             exp -= 31;
         } else {
@@ -78,7 +80,65 @@ float my_random_float2()
 // compute a random double using my algorithm
 double my_random_double()
 {
-    // TODO: fill this in
+  // int x, exp, mant;
+  // double f;
+  //
+  // // this union is for assembling the float.
+  // union {
+  //     double d;
+  //     int i;
+  // } b;
+  //
+  // // generate 31 random bits (assuming that RAND_MAX is 2^31 - 1
+  // x = random();
+  //
+  // // use bit-scan-forward to find the first set bit and
+  // // compute the exponent
+  // asm ("bsfl %1, %0"
+  // :"=r"(exp)
+  // :"r"(x)
+  // );
+  // exp = 1022 - exp;
+  //
+  // // use the other 23 bits for the mantissa (for small numbers
+  // // this means we are re-using some bits)
+  // mant = x >> 11;
+  // b.i = (exp << 52) | mant;
+  //
+  // return b.d;
+  long x;
+  long mant;
+  long exp = 1022;
+  long mask = 1;
+
+  union {
+      double d;
+      long l;
+  } b;
+
+  // generate random bits until we see the first set bit
+  while (1) {
+      x = random(); // Random only generates 31 bits of randomness
+      x = (x<<32) | random();// BUT WE WANT MOAARRRRRR
+      // printf("%li",x);
+      if (x == 0) {
+          exp -= 63;
+      } else {
+          break;
+      }
+  }
+
+  // find the location of the first set bit and compute the exponent
+  while (x & mask) {
+      mask <<= 1;
+      exp--;
+  }
+
+  // use the remaining bit as the mantissa
+  mant = x >> 11;
+  b.l = (exp << 52) | mant;
+
+  return b.d;
 }
 
 // return a constant (this is a dummy function for time trials)
