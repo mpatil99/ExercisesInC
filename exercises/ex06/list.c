@@ -30,6 +30,11 @@ Node *make_node(int val, Node *next) {
     return node;
 }
 
+void free_Node(Node* node){
+  node-> next = NULL;
+  free(node);
+}
+
 
 /* Prints the values in a list.
 *
@@ -63,6 +68,7 @@ int pop(Node **list) {
       val = current -> val;
       *list = current -> next;
     }
+
     return val;
 }
 
@@ -127,6 +133,7 @@ void reverse(Node **list) {
       current = after;
     }
     *list = prev;
+  
 }
 
 
@@ -154,4 +161,6 @@ int main() {
 
     reverse(list);
     print_list(list);
+
+
 }
