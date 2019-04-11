@@ -1,4 +1,4 @@
-/* Example code for Exercises in C.
+git /* Example code for Exercises in C.
 
 Copyright 2016 Allen Downey
 License: Creative Commons Attribution-ShareAlike 3.0

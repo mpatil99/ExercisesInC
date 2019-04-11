@@ -133,7 +133,7 @@ void reverse(Node **list) {
       current = after;
     }
     *list = prev;
-  
+
 }
 
 
@@ -161,6 +161,8 @@ int main() {
 
     reverse(list);
     print_list(list);
+
+
 
 
 }
