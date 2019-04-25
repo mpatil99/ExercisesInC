@@ -14,8 +14,10 @@ Modified by Allen Downey.
 #include <sys/types.h>
 #include <unistd.h>
 #include <signal.h>
+#include <pthread.h>
 
 int listener_d = 0;
+
 
 /* Print an error message and exit.
 */
@@ -49,7 +51,7 @@ void handle_shutdown(int sig) {
 int open_listener_socket(void) {
     int s = socket(PF_INET, SOCK_STREAM, 0);
     if (s == -1)
-    error("Can't open listener socket");
+        error("Can't open listener socket");
     return s;
 }
 
@@ -90,7 +92,7 @@ void bind_to_port(int socket, int port) {
 */
 int say(int socket, char *s)
 {
-    int res = send(socket, s, strlen(s), 0);
+    int res = send(socket, s, 0, 0);
     if (res == -1)
         error("Error talking to the client");
     return res;
@@ -132,11 +134,42 @@ int read_in(int socket, char *buf, int len)
 }
 
 char intro_msg[] = "Internet Knock-Knock Protocol Server\nKnock, knock.\n";
+void* communicate(void* a){
+    int connect_d = (long) a;
+    char buf[255];
+    if (say(connect_d, intro_msg) == -1) {
+        close(connect_d);
+        return NULL;
+    }
 
+    read_in(connect_d, buf, sizeof(buf));
+    if(strncasecmp("Who's there?", buf, 12)){
+        say(connect_d, "You should say 'Who's there?'");
+        close(connect_d);
+        return NULL;
+    }
+    if (say(connect_d, "Surrealist giraffe.\n") == -1) {
+        close(connect_d);
+        return NULL;
+    }
+
+    read_in(connect_d, buf, sizeof(buf));
+    if(strncasecmp("Surrealist giraffe who?", buf,24)){
+        say(connect_d, "You should say 'Surrealist giraffe who?'");
+        close(connect_d);
+        return NULL;
+    }
+    if (say(connect_d, "Bathtub full of brightly-colored machine tools.\n") == -1) {
+        close(connect_d);
+        return NULL;
+    }
+    return NULL;
+}
 int main(int argc, char *argv[])
 {
-    char buf[255];
 
+    pthread_t t0;
+    int count = 0;
     // set up the signal handler
     if (catch_signal(SIGINT, handle_shutdown) == -1)
         error("Setting interrupt handler");
@@ -152,29 +185,17 @@ int main(int argc, char *argv[])
 
 
     while (1) {
+
         printf("Waiting for connection on port %d\n", port);
-        int connect_d = open_client_socket();z
+        long connect_d = open_client_socket();
+        if(connect_d == -1)
+            error("can't open secondary socket");
 
-        if (say(connect_d, intro_msg) == -1) {
-            close(connect_d);
-            continue;
+        if(pthread_create(&t0, NULL, communicate, (void*) connect_d) == -1){
+            error("Can't create thread");
         }
 
-        read_in(connect_d, buf, sizeof(buf));
-        // TODO (optional): check to make sure they said "Who's there?"
 
-        if (say(connect_d, "Surrealist giraffe.\n") == -1) {
-            close(connect_d);
-            continue;
-        }
-
-        read_in(connect_d, buf, sizeof(buf));
-        // TODO (optional): check to make sure they said "Surrealist giraffe who?"
-
-        if (say(connect_d, "Bathtub full of brightly-colored machine tools.\n") == -1) {
-            close(connect_d);
-            continue;
-        }
 
         close(connect_d);
     }

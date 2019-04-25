@@ -90,7 +90,7 @@ void bind_to_port(int socket, int port) {
 */
 int say(int socket, char *s)
 {
-    int res = send(socket, s, strlen(s), 0);
+    int res = send(socket, s, 0, 0);
     if (res == -1)
         error("Error talking to the client");
     return res;
@@ -153,27 +153,39 @@ int main(int argc, char *argv[])
 
     while (1) {
         printf("Waiting for connection on port %d\n", port);
-        int connect_d = open_client_socket();z
+        int connect_d = open_client_socket();
+        pid_t pid= fork();
+        if(!pid){
+            close(listener_d);
+            if (say(connect_d, intro_msg) == -1) {
+                close(connect_d);
+                continue;
+            }
 
-        if (say(connect_d, intro_msg) == -1) {
+            read_in(connect_d, buf, sizeof(buf));
+            if(strncasecmp("Who's there?", buf, 12)){
+                say(connect_d, "You should say 'Who's there?'");
+                close(connect_d);
+                exit(0);
+            }
+            if (say(connect_d, "Surrealist giraffe.\n") == -1) {
+                close(connect_d);
+                continue;
+            }
+
+            read_in(connect_d, buf, sizeof(buf));
+            // TODO (optional): check to make sure they said "Surrealist giraffe who?"
+            if(strncasecmp("Surrealist giraffe who?", buf,24)){
+                say(connect_d, "You should say 'Surrealist giraffe who?'");
+                close(connect_d);
+                exit(0);
+            }
+            if (say(connect_d, "Bathtub full of brightly-colored machine tools.\n") == -1) {
+                close(connect_d);
+                continue;
+            }
             close(connect_d);
-            continue;
-        }
-
-        read_in(connect_d, buf, sizeof(buf));
-        // TODO (optional): check to make sure they said "Who's there?"
-
-        if (say(connect_d, "Surrealist giraffe.\n") == -1) {
-            close(connect_d);
-            continue;
-        }
-
-        read_in(connect_d, buf, sizeof(buf));
-        // TODO (optional): check to make sure they said "Surrealist giraffe who?"
-
-        if (say(connect_d, "Bathtub full of brightly-colored machine tools.\n") == -1) {
-            close(connect_d);
-            continue;
+            exit(0);
         }
 
         close(connect_d);
