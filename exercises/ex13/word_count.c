@@ -35,6 +35,12 @@ void pair_printor(gpointer value, gpointer user_data)
     Pair *pair = (Pair *) value;
     printf("%d\t %s\n", pair->freq, pair->word);
 }
+void seq_free(gpointer value, gpointer user_data)
+{
+    Pair *pair = (Pair *) value;
+    free(pair->word);
+    free(pair);
+}
 
 
 /* Iterator that prints keys and values. */
@@ -43,13 +49,19 @@ void kv_printor (gpointer key, gpointer value, gpointer user_data)
     printf(user_data, key, *(gint *) value);
 }
 
+void hash_table_free (gpointer key, gpointer value, gpointer user_data)
+{
+    free(key);
+    free(value);
+}
+
 
 /* Iterator that adds key-value pairs to a sequence. */
 void accumulator(gpointer key, gpointer value, gpointer user_data)
 {
     GSequence *seq = (GSequence *) user_data;
     Pair *pair = g_new(Pair, 1);
-    pair->word = (gchar *) key;
+    pair->word = g_strdup((gchar *) key);
     pair->freq = *(gint *) value;
 
     g_sequence_insert_sorted(seq,
@@ -66,7 +78,7 @@ void incr(GHashTable* hash, gchar *key)
     if (val == NULL) {
         gint *val1 = g_new(gint, 1);
         *val1 = 1;
-        g_hash_table_insert(hash, key, val1);
+        g_hash_table_insert(hash, g_strdup(key), val1);
     } else {
         *val += 1;
     }
@@ -103,9 +115,13 @@ int main(int argc, char** argv)
         array = g_strsplit(line, " ", 0);
         for (int i=0; array[i] != NULL; i++) {
             incr(hash, array[i]);
+
         }
+        g_strfreev (array);
+
     }
     fclose(fp);
+    free(fp);
 
     // print the hash table
     // g_hash_table_foreach(hash, (GHFunc) kv_printor, "Word %s freq %d\n");
@@ -118,7 +134,9 @@ int main(int argc, char** argv)
     g_sequence_foreach(seq, (GFunc) pair_printor, NULL);
 
     // try (unsuccessfully) to free everything
+    g_hash_table_foreach(hash, (GHFunc) hash_table_free, NULL);
     g_hash_table_destroy(hash);
+    g_sequence_foreach(seq, (GFunc) seq_free, NULL);
     g_sequence_free(seq);
 
     return 0;

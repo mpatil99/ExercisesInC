@@ -178,6 +178,13 @@ Node *make_something() {
     return node3;
 }
 
+void freeNodes(Node *node){
+    if (node->next != NULL){
+      freeNodes(node->next);
+    }
+    free(node);
+}
+
 
 int main() {
     // make a list of even numbers
@@ -207,7 +214,11 @@ int main() {
     print_list(&empty);
 
     Node *something = make_something();
-    free(something);
+
+
+    freeNodes(test_list);
+    freeNodes(empty);
+    freeNodes(something);
 
     return 0;
 }
