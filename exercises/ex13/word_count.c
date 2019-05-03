@@ -35,11 +35,13 @@ void pair_printor(gpointer value, gpointer user_data)
     Pair *pair = (Pair *) value;
     printf("%d\t %s\n", pair->freq, pair->word);
 }
-void seq_free(gpointer value, gpointer user_data)
+
+/* Destructs an element of a sequence */
+void pair_destructor (gpointer p)
 {
-    Pair *pair = (Pair *) value;
-    free(pair->word);
-    free(pair);
+    Pair *pair = (Pair *) p;
+    g_free(pair->word);
+    g_free(pair);
 }
 
 
@@ -105,7 +107,11 @@ int main(int argc, char** argv)
     (one-L) NUL terminated strings */
     gchar **array;
     gchar line[128];
-    GHashTable* hash = g_hash_table_new(g_str_hash, g_str_equal);
+
+    GHashTable* hash = g_hash_table_new_full(g_str_hash,
+                                             g_str_equal,
+                                             g_free,
+                                             g_free);
 
     // read lines from the file and build the hash table
     while (1) {
@@ -117,17 +123,15 @@ int main(int argc, char** argv)
             incr(hash, array[i]);
 
         }
-        g_strfreev (array);
-
+        g_strfreev(array);
     }
     fclose(fp);
-    free(fp);
 
     // print the hash table
     // g_hash_table_foreach(hash, (GHFunc) kv_printor, "Word %s freq %d\n");
 
     // iterate the hash table and build the sequence
-    GSequence *seq = g_sequence_new(NULL);
+    GSequence *seq = g_sequence_new ((GDestroyNotify) pair_destructor);
     g_hash_table_foreach(hash, (GHFunc) accumulator, (gpointer) seq);
 
     // iterate the sequence and print the pairs

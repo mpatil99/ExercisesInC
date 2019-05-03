@@ -49,7 +49,9 @@ void reader_code(Shared *shared)
 */
 void writer_code(Shared *shared)
 {
+    mutex_lock(shared->mutex);
     printf("I am writing the thing.\n");
+    mutex_unlock(shared->mutex);
 }
 
 /* Entry point for the reader threads.
